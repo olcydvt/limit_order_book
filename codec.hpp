@@ -13,23 +13,24 @@ namespace limit_order {
         }
 
         void parse_message(limit_order::place_order_messasge& message, std::string& data) {
-            auto* _data = (uint8_t*)(&data[0]);
-            uint32_t message_size;
-            std::memcpy(&message_size, _data, sizeof(uint32_t));
+            auto* _data = (uint8_t*) (&data[0]);
+            uint32_t  message_size;
+            std::memcpy(&message_size, _data+ 1, sizeof(int32_t));
+
             protozero::pbf_reader reader{reinterpret_cast<const char*>(_data + 5), message_size};
             while (reader.next()) {
                 switch (reader.tag()) {
                     case  limit_order::place_order_messasge::order_id_tag:
-                        message.order_id = reader.get_fixed32();
+                        message.order_id = reader.get_int32();
                     break;
                     case  limit_order::place_order_messasge::order_side_tag:
-                        message.order_side = static_cast<limit_order::order_side>(reader.get_fixed32());
+                        message.order_side = static_cast<limit_order::order_side>(reader.get_int32());
                     break;
                     case  limit_order::place_order_messasge::price_tag:
-                        message.price = reader.get_fixed32();
+                        message.price = reader.get_int32();
                     break;
                     case  limit_order::place_order_messasge::amount_tag:
-                        message.amount = reader.get_fixed32();
+                        message.amount = reader.get_int32();
                     break;
                     case  limit_order::place_order_messasge::symbol_tag:
                         message.symbol = reader.get_string();
@@ -82,7 +83,7 @@ namespace limit_order {
             writer.add_int32( place_order_messasge::order_id_tag, msg.order_id);
             writer.add_int32( place_order_messasge::amount_tag, msg.amount);
             writer.add_int32(place_order_messasge::price_tag, msg.price);
-            writer.add_string(place_order_messasge::symbol_tag , msg.symbol.data());
+            writer.add_string(place_order_messasge::symbol_tag , msg.symbol);
 
             header.resize(header.size() + 4);
             size_t length = data.length();

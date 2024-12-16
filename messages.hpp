@@ -18,7 +18,7 @@ namespace limit_order {
         int price;
         int amount;
         order_side order_side;
-        std::string_view symbol;
+        std::string symbol;
     };
 
     struct order_placed_message {
