@@ -1,0 +1,18 @@
+﻿{
+    "version": 4,
+    "configurePresets": [
+        {
+            "name": "debug-windows-x64",
+            "displayName": "Debug (Windows; MSVC; x64)",
+            "binaryDir": "${sourceDir}/build/debug",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "1",
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}",
+                "CMAKE_TOOLCHAIN_FILE": "C:/aegeanlabs/prod/xhub-mt5-gateway/contrib/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "x64-windows-static-md"
+            }
+        }
+    ]
+}
