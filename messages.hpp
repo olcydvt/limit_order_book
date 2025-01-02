@@ -56,4 +56,10 @@ namespace limit_order {
 
     };
 
+    struct order_cancelled {
+        static inline constexpr const uint8_t message_type_value = 6;
+        static inline constexpr const uint32_t order_id_tag = 1;
+        int order_id;
+    };
+
    }

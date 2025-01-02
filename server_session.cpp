@@ -44,6 +44,12 @@ void server_session::handler(std::string& data) {
             _engine->on_request(message, m_socket);
             break;
         }
+        case cancel_order_message::message_type_value: {
+            limit_order::cancel_order_message message;
+            _codec.parse_message(message, data);
+            _engine->on_request(message, m_socket);
+            break;
+        }
     }
 }
 

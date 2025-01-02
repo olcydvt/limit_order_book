@@ -58,7 +58,6 @@ namespace limit_order {
         executed_order process_order(order_side _order_side, int price, int amount) {
             int initial_amount  = amount;
             if (_order_side == order_side::buy) {
-                std::lock_guard<std::mutex> lock_buy(buy_orders_mutex);
                 std::lock_guard<std::mutex> lock_sell(sell_orders_mutex);
 
                 while (!sell_orders.empty() && price >= sell_orders.begin()->first && amount > 0) {
@@ -75,7 +74,6 @@ namespace limit_order {
                     add_buy_order(price, amount); // Add remaining amount to buy orders
             } else {
                 std::lock_guard<std::mutex> lock_buy(buy_orders_mutex);
-                std::lock_guard<std::mutex> lock_sell(sell_orders_mutex);
                 while (!buy_orders.empty() && price <= buy_orders.begin()->first && amount > 0) {
                     auto [buy_price, buy_amount] = *buy_orders.begin();
                     if (amount >= buy_amount) {

@@ -45,7 +45,7 @@ namespace limit_order {
         void add_buy_order(int price, int amount);
         void add_sell_order(int price, int amount);
         limit_order_book::executed_order process_order(const order& _order, const std::string_view symbol);
-        void remove_order(const order& _order, const std::string_view symbol);
+        void remove_order(int order_id);
         void on_request(limit_order::place_order_messasge& message,  tcp::socket& m_socket);
         void on_request(limit_order::cancel_order_message& message, tcp::socket& m_socket);
 

@@ -4,6 +4,8 @@
 #include "server_session.h"
 #include <latch>
 #include <thread>
+#include <print>
+
 using namespace std;
 
 void send_trade_from_x() {
@@ -13,15 +15,34 @@ void send_trade_from_x() {
     tcp::resolver resolver(io_context);
     asio::connect(socket, resolver.resolve("127.0.0.1", "25000"));
 
-    cout << "Sending trade" << endl;
+    std::println (  "Sending trade" );
     limit_order::place_order_messasge message;
     message.order_id = 123;
     message.amount = 5;
     message.price = 100;
     message.symbol = "EURUSD";
+    message.order_side = limit_order::order_side::buy;
     limit_order::client_codec client_codec;
     auto msg = client_codec.serialize_message(message);
     auto result = asio::write(socket, asio::buffer(msg));
+    for (;;) {
+        char response[1024];
+        size_t length = socket.read_some(asio::buffer(response));
+        std::string resp(response, length);
+        switch (uint8_t message_type = client_codec.get_message_type(resp)) {
+            case limit_order::order_placed_message::message_type_value:
+                std::println ("order {} confirmed ", message.order_id);
+                limit_order::order_placed_message msg;
+                client_codec.parse_message(msg, resp);
+                break;
+            case limit_order::order_traded::message_type_value:
+                std::println("order {} fulfilled ", message.order_id);
+                limit_order::order_traded traded_msg;
+                client_codec.parse_message(traded_msg, resp);
+                break;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }
 
 void send_trade_from_y() {
@@ -37,11 +58,22 @@ void send_trade_from_y() {
     limit_order::client_codec client_codec;
     auto msg = client_codec.serialize_message(message);
     auto result = asio::write(socket, asio::buffer(msg));
+    for (;;) {
+        char response[1024];
+        size_t length = socket.read_some(asio::buffer(response));
+        std::string resp(response, length);
+        switch (uint8_t message_type = client_codec.get_message_type(resp)) {
+            case limit_order::order_cancelled::message_type_value:
+                std::println ("order {} confirmed ", message.order_id);
+            limit_order::order_placed_message msg;
+            client_codec.parse_message(msg, resp);
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }
 
-int main()
-{
-
+int main() {
     limit_order::limit_order_book order_book;
     limit_order::client_codec client_codec;
     limit_order::server_codec server_codec;
@@ -52,7 +84,7 @@ int main()
     eng.add_sell_order(101, 8);
     eng.add_sell_order(102, 15);
     std::jthread client_1(send_trade_from_x);
-    std::jthread client_2(send_trade_from_y);
+    //std::jthread client_2(send_trade_from_y);
     asio::io_context io_context;
     limit_order::server limit_order_server{io_context, 25000, &eng, server_codec};
     io_context.run();
@@ -60,5 +92,4 @@ int main()
     latch.wait();
 
     return 0;
-
 }

@@ -42,6 +42,6 @@ public:
 private:
     asio::io_context& io_context;
     tcp::acceptor m_acceptor;
-};
+    };
 
 }
