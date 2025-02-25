@@ -1,5 +1,13 @@
-#usage
+# Limit Order Book
 
+
+## Installation
+
+NA
+
+## Usage
+
+```c++
 #include "order_book.hpp"
 
 
@@ -19,4 +27,12 @@ int main()
     return 0;
     
 }
+```
 
+## Contributing
+
+NA
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
