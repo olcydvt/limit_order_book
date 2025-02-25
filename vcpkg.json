@@ -1,7 +1,0 @@
-{
-    "dependencies": [
-        "protozero",
-        "asio",
-        "openssl"
-    ]
-}
