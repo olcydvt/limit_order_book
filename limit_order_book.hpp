@@ -7,7 +7,7 @@
 
 buy/long/+
 sell/short/-
-if the order is but then price will be (+) integer
+if the order is buy then price will be (+) integer
 controversially if the order is sell then price will be (-) integer
 */
 
